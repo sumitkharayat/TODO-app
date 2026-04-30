@@ -4,7 +4,7 @@ A full-stack To-Do web application built with Java Spring Boot, MySQL, and vanil
 
 🔗 **Live Demo:** https://todo-app-8q5j.onrender.com
 
-## 🚀 Features
+##  Features
 - Add tasks with title, description, priority and due date
 - Smart status — auto detects In Progress vs Overdue based on date/time
 - Mark tasks as completed
@@ -13,7 +13,7 @@ A full-stack To-Do web application built with Java Spring Boot, MySQL, and vanil
 - Stats dashboard (Total / In Progress / Overdue / Done)
 - Data saved to real MySQL database
 
-## 🛠️ Tech Stack
+##  Tech Stack
 | Layer | Technology |
 |-------|-----------|
 | Backend | Java 25 + Spring Boot 4.0.5 |
@@ -23,7 +23,7 @@ A full-stack To-Do web application built with Java Spring Boot, MySQL, and vanil
 | Server | Apache Tomcat (embedded) |
 | Hosting | Render |
 
-## 📁 Project Structure
+##  Project Structure
 ```
 src/main/java/com/example/todo/
 ├── TodoApplication.java
@@ -40,7 +40,7 @@ src/main/java/com/example/todo/
     └── TodoService.java
 ```
 
-## ⚙️ Run Locally
+##  Run Locally
 
 ### Prerequisites
 - Java 17+
