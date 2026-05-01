@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login — Todo App</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, sans-serif;
+      background: #f0f2f5;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 40px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    }
+    h1 { font-size: 1.8rem; color: #1a1a2e; margin-bottom: 6px; }
+    p { color: #888; font-size: 0.9rem; margin-bottom: 28px; }
+    input {
+      width: 100%; padding: 12px 14px;
+      border: 1.5px solid #e0e0e0; border-radius: 8px;
+      font-size: 0.95rem; outline: none; margin-bottom: 12px;
+      font-family: inherit;
+    }
+    input:focus { border-color: #4361ee; }
+    .btn {
+      width: 100%; padding: 12px; border: none;
+      border-radius: 8px; font-size: 1rem;
+      font-weight: 500; cursor: pointer; margin-bottom: 10px;
+    }
+    .btn-primary { background: #4361ee; color: white; }
+    .btn-secondary { background: #f0f2f5; color: #333; }
+    .error { color: #c0392b; font-size: 0.85rem; margin-bottom: 10px; display: none; }
+    .toggle { text-align: center; font-size: 0.9rem; color: #888; margin-top: 10px; }
+    .toggle span { color: #4361ee; cursor: pointer; font-weight: 500; }
+  </style>
+</head>
+<body>
+<div class="card">
+  <h1>📝 Todo App</h1>
+  <p id="subtitle">Sign in to your account</p>
+  <div class="error" id="errorMsg"></div>
+
+  <div id="emailField" style="display:none">
+    <input type="email" id="emailInput" placeholder="Email address" />
+  </div>
+  <input type="text" id="usernameInput" placeholder="Username" />
+  <input type="password" id="passwordInput" placeholder="Password" />
+
+  <button class="btn btn-primary" onclick="handleSubmit()" id="submitBtn">Sign In</button>
+  <div class="toggle">
+    <span id="toggleText">Don't have an account? <span onclick="toggleMode()">Register</span></span>
+  </div>
+</div>
+
+<script>
+  let isRegister = false;
+
+  function toggleMode() {
+    isRegister = !isRegister;
+    document.getElementById('subtitle').textContent = isRegister ? 'Create a new account' : 'Sign in to your account';
+    document.getElementById('submitBtn').textContent = isRegister ? 'Register' : 'Sign In';
+    document.getElementById('emailField').style.display = isRegister ? 'block' : 'none';
+    document.getElementById('toggleText').innerHTML = isRegister
+            ? 'Already have an account? <span onclick="toggleMode()">Sign In</span>'
+            : 'Don\'t have an account? <span onclick="toggleMode()">Register</span>';
+  }
+
+  async function handleSubmit() {
+    const username = document.getElementById('usernameInput').value.trim();
+    const password = document.getElementById('passwordInput').value.trim();
+    const email = document.getElementById('emailInput').value.trim();
+    const errorMsg = document.getElementById('errorMsg');
+
+    if (!username || !password) {
+      showError('Please fill in all fields');
+      return;
+    }
+
+    const url = isRegister ? '/api/auth/register' : '/api/auth/login';
+    const body = isRegister
+            ? { username, password, email }
+            : { username, password };
+
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        showError(data.error || 'Something went wrong');
+        return;
+      }
+
+      if (isRegister) {
+        showError('');
+        alert('Registered! Please sign in.');
+        toggleMode();
+      } else {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('userId', data.userId);
+        localStorage.setItem('username', data.username);
+        window.location.href = '/index.html';
+      }
+    } catch (e) {
+      showError('Could not connect to server');
+    }
+  }
+
+  function showError(msg) {
+    const el = document.getElementById('errorMsg');
+    el.textContent = msg;
+    el.style.display = msg ? 'block' : 'none';
+  }
+
+  // If already logged in go straight to app
+  if (localStorage.getItem('token')) {
+    window.location.href = '/index.html';
+  }
+</script>
+</body>
+</html>
